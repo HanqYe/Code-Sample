@@ -4,9 +4,7 @@ Replication code for a difference-in-differences study of how one education
 influencer's commentary moved college admission cutoffs in China. The paper
 uses large language model APIs to convert several hundred hours of unstructured
 speech into a score for each major category, then estimates the effect on
-major-level admission outcomes for 119 universities, 2017 to 2025.
-
-Author: Qiye Han, School of Economics, Renmin University of China.
+major-level admission outcomes for 118 universities, 2017 to 2025.
 
 ## Requirements
 
