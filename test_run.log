@@ -1,0 +1,2654 @@
+
+  ___  ____  ____  ____  ____ ®
+ /__    /   ____/   /   ____/      StataNow 19.5
+___/   /   /___/   /   /___/       MP—Parallel Edition
+
+ Statistics and Data Science       Copyright 1985-2025 StataCorp LLC
+                                   StataCorp
+                                   4905 Lakeway Drive
+                                   College Station, Texas 77845 USA
+                                   800-782-8272        https://www.stata.com
+                                   979-696-4600        service@stata.com
+
+Stata license: 114514-student 64-core lab perpetual
+Serial number: 9223372036854775807
+  Licensed to: Hq
+               1
+
+Notes:
+      1. Stata is running in batch mode.
+      2. Unicode is supported; see help unicode_advice.
+      3. More than 2 billion observations are allowed; see help obs_advice.
+      4. Maximum number of variables is set to 5,000 but can be increased;
+          see help set_maxvar.
+
+. do C:\Users\HanQE\AppData\Local\Temp\claude\E----code\e76feded-6635-46e0-b38c
+> -8058e61e8743\scratchpad\test_run.do 
+
+. clear all
+
+. 
+. global root "E:/小创code/major-choice-replication"
+
+. global raw  "E:/小创code/小创code/1Original data"
+
+. 
+. global data   "E:/小创code/writing_sample/data"
+
+. global tables "$root/output/tables"
+
+. global figs   "$root/output/figures"
+
+. global logs   "$root/output/logs"
+
+. 
+. global FE province_num#category_num#level3_name_num province_num#year#categor
+> y_num hightitle_num#year
+
+. 
+. global ORANGE "230 126 34"
+
+. global BLUE   "51 133 190"
+
+. 
+. set more off
+
+. 
+. do "$root/code/tables/06_main.do"
+
+. clear
+
+. * Globals come from config.do, which run_all.do loads first.
+. * To run this file on its own, run config.do in the same session.
+. 
+. log using "$logs/06_main.log", replace text
+(file E:/小创code/major-choice-replication/output/logs/06_main.log not found)
+-------------------------------------------------------------------------------
+      name:  <unnamed>
+       log:  E:/小创code/major-choice-replication/output/logs/06_main.log
+  log type:  text
+ opened on:  10 Sep 2026, 00:14:54
+
+. 
+. ****************Table 4, baseline, excluding the six early-reform provinces
+. use "$data/analysis.dta", clear
+
+. keep if special_prov == 0
+(44,597 observations deleted)
+
+. keep if keepA == 1
+(7,174 observations deleted)
+
+. 
+. eststo clear
+
+. eststo t4c1: reghdfe ratio_num DID treat1, absorb(province_num#year#category_
+> num hightitle_num#year) vce(robust)
+(dropped 1 singleton observations)
+(MWFE estimator converged in 7 iterations)
+
+HDFE Linear regression                            Number of obs   =    185,905
+Absorbing 2 HDFE groups                           F(   2, 184492) =     308.47
+                                                  Prob > F        =     0.0000
+                                                  R-squared       =     0.8368
+                                                  Adj R-squared   =     0.8356
+                                                  Within R-sq.    =     0.0036
+                                                  Root MSE        =     0.0933
+
+------------------------------------------------------------------------------
+             |               Robust
+   ratio_num | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+         DID |   .0282731   .0019963    14.16   0.000     .0243604    .0321858
+      treat1 |   .0104498   .0010376    10.07   0.000     .0084162    .0124834
+       _cons |   .2684604   .0002263  1186.16   0.000     .2680168     .268904
+------------------------------------------------------------------------------
+
+Absorbed degrees of freedom:
+----------------------------------------------------------------------------+
+                        Absorbed FE | Categories  - Redundant  = Num. Coefs |
+------------------------------------+---------------------------------------|
+     province_num#year#category_num |       388           0         388     |
+                 hightitle_num#year |      1032           9        1023     |
+----------------------------------------------------------------------------+
+
+. eststo t4c2: reghdfe ratio_num DID,        absorb($FE) vce(robust)
+(dropped 18 singleton observations)
+(MWFE estimator converged in 8 iterations)
+
+HDFE Linear regression                            Number of obs   =    185,888
+Absorbing 3 HDFE groups                           F(   1, 183173) =     210.08
+                                                  Prob > F        =     0.0000
+                                                  R-squared       =     0.8525
+                                                  Adj R-squared   =     0.8503
+                                                  Within R-sq.    =     0.0013
+                                                  Root MSE        =     0.0890
+
+------------------------------------------------------------------------------
+             |               Robust
+   ratio_num | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+         DID |   .0285458   .0019695    14.49   0.000     .0246857    .0324059
+       _cons |   .2692024   .0002107  1277.93   0.000     .2687895    .2696153
+------------------------------------------------------------------------------
+
+Absorbed degrees of freedom:
+-------------------------------------------------------------------------------
+> --------+
+                                   Absorbed FE | Categories  - Redundant  = Num
+> . Coefs                                                                      
+>         |
+-----------------------------------------------+-------------------------------
+> --------|
+     province_num#category_num#level3_name_num |      1349           0        1
+> 349                                                                          
+>                                                                              
+>         |
+                province_num#year#category_num |       388          46         
+> 342                                                                          
+>                                                                              
+>         |
+                            hightitle_num#year |      1032           9        1
+> 023                                                                          
+>        ?                                                                     
+>         |
+-------------------------------------------------------------------------------
+> --------+
+? = number of redundant parameters may be higher
+
+. eststo t4c3: reghdfe min_num   DID treat1, absorb(province_num#year#category_
+> num hightitle_num#year) vce(robust)
+(dropped 1 singleton observations)
+(MWFE estimator converged in 7 iterations)
+
+HDFE Linear regression                            Number of obs   =    185,958
+Absorbing 2 HDFE groups                           F(   2, 184545) =     612.08
+                                                  Prob > F        =     0.0000
+                                                  R-squared       =     0.9454
+                                                  Adj R-squared   =     0.9450
+                                                  Within R-sq.    =     0.0062
+                                                  Root MSE        =    13.5637
+
+------------------------------------------------------------------------------
+             |               Robust
+     min_num | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+         DID |  -4.764539   .2719958   -17.52   0.000    -5.297645   -4.231434
+      treat1 |  -2.375015    .138336   -17.17   0.000     -2.64615   -2.103879
+       _cons |   576.5608   .0327691  1.8e+04   0.000     576.4966    576.6251
+------------------------------------------------------------------------------
+
+Absorbed degrees of freedom:
+----------------------------------------------------------------------------+
+                        Absorbed FE | Categories  - Redundant  = Num. Coefs |
+------------------------------------+---------------------------------------|
+     province_num#year#category_num |       388           0         388     |
+                 hightitle_num#year |      1032           9        1023     |
+----------------------------------------------------------------------------+
+
+. eststo t4c4: reghdfe min_num   DID,        absorb($FE) vce(robust)
+(dropped 18 singleton observations)
+(MWFE estimator converged in 8 iterations)
+
+HDFE Linear regression                            Number of obs   =    185,941
+Absorbing 3 HDFE groups                           F(   1, 183226) =     350.82
+                                                  Prob > F        =     0.0000
+                                                  R-squared       =     0.9528
+                                                  Adj R-squared   =     0.9521
+                                                  Within R-sq.    =     0.0018
+                                                  Root MSE        =    12.6504
+
+------------------------------------------------------------------------------
+             |               Robust
+     min_num | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+         DID |  -4.880093   .2605472   -18.73   0.000    -5.390759   -4.369427
+       _cons |   576.3949   .0298727  1.9e+04   0.000     576.3364    576.4535
+------------------------------------------------------------------------------
+
+Absorbed degrees of freedom:
+-------------------------------------------------------------------------------
+> --------+
+                                   Absorbed FE | Categories  - Redundant  = Num
+> . Coefs                                                                      
+>         |
+-----------------------------------------------+-------------------------------
+> --------|
+     province_num#category_num#level3_name_num |      1349           0        1
+> 349                                                                          
+>                                                                              
+>         |
+                province_num#year#category_num |       388          46         
+> 342                                                                          
+>                                                                              
+>         |
+                            hightitle_num#year |      1032           9        1
+> 023                                                                          
+>        ?                                                                     
+>         |
+-------------------------------------------------------------------------------
+> --------+
+? = number of redundant parameters may be higher
+
+. 
+. esttab t4c1 t4c2 t4c3 t4c4 using "$tables/table4_main.tex", replace ///
+>         b(4) se(4) star(* 0.10 ** 0.05 *** 0.01) ///
+>         keep(DID treat1) ///
+>         mtitles("Rank ratio" "Rank ratio" "Min. score" "Min. score") ///
+>         coeflabels(DID "Treat $\times$ Post" treat1 "Treat") ///
+>         stats(N r2, labels("Observations" "R-squared") fmt(0 3)) ///
+>         booktabs nonotes label
+(file E:/小创code/major-choice-replication/output/tables/table4_main.tex not
+    found)
+(output written to E:/小创code/major-choice-replication/output/tables/table4_ma
+> in.tex)
+
+. 
+. esttab t4c1 t4c2 t4c3 t4c4, b(4) se(4) keep(DID treat1) stats(N r2)
+
+----------------------------------------------------------------------------
+                      (1)             (2)             (3)             (4)   
+                ratio_num       ratio_num         min_num         min_num   
+----------------------------------------------------------------------------
+DID                0.0283***       0.0285***      -4.7645***      -4.8801***
+                 (0.0020)        (0.0020)        (0.2720)        (0.2605)   
+
+treat1             0.0104***                      -2.3750***                
+                 (0.0010)                        (0.1383)                   
+----------------------------------------------------------------------------
+N             185905.0000     185888.0000     185958.0000     185941.0000   
+r2                 0.8368          0.8525          0.9454          0.9528   
+----------------------------------------------------------------------------
+Standard errors in parentheses
+* p<0.05, ** p<0.01, *** p<0.001
+
+. 
+. ****************Table 5, the six provinces reinstated
+. use "$data/analysis.dta", clear
+
+. 
+. eststo clear
+
+. eststo t5c1: reghdfe ratio_num DID treat1, absorb(province_num#year#category_
+> num hightitle_num#year) vce(robust)
+(dropped 2 singleton observations)
+(MWFE estimator converged in 6 iterations)
+
+HDFE Linear regression                            Number of obs   =    237,670
+Absorbing 2 HDFE groups                           F(   2, 236183) =     337.06
+                                                  Prob > F        =     0.0000
+                                                  R-squared       =     0.8319
+                                                  Adj R-squared   =     0.8309
+                                                  Within R-sq.    =     0.0029
+                                                  Root MSE        =     0.0951
+
+------------------------------------------------------------------------------
+             |               Robust
+   ratio_num | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+         DID |   .0267515   .0017378    15.39   0.000     .0233454    .0301576
+      treat1 |   .0087406    .000934     9.36   0.000     .0069099    .0105712
+       _cons |   .2657203   .0002035  1305.82   0.000     .2653214    .2661191
+------------------------------------------------------------------------------
+
+Absorbed degrees of freedom:
+----------------------------------------------------------------------------+
+                        Absorbed FE | Categories  - Redundant  = Num. Coefs |
+------------------------------------+---------------------------------------|
+     province_num#year#category_num |       459           0         459     |
+                 hightitle_num#year |      1035           9        1026     |
+----------------------------------------------------------------------------+
+
+. eststo t5c2: reghdfe ratio_num DID,        absorb($FE) vce(robust)
+(dropped 20 singleton observations)
+(MWFE estimator converged in 8 iterations)
+
+HDFE Linear regression                            Number of obs   =    237,652
+Absorbing 3 HDFE groups                           F(   1, 234461) =     263.04
+                                                  Prob > F        =     0.0000
+                                                  R-squared       =     0.8482
+                                                  Adj R-squared   =     0.8462
+                                                  Within R-sq.    =     0.0012
+                                                  Root MSE        =     0.0907
+
+------------------------------------------------------------------------------
+             |               Robust
+   ratio_num | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+         DID |   .0279393   .0017227    16.22   0.000     .0245629    .0313156
+       _cons |   .2663096   .0001896  1404.61   0.000      .265938    .2666812
+------------------------------------------------------------------------------
+
+Absorbed degrees of freedom:
+-------------------------------------------------------------------------------
+> --------+
+                                   Absorbed FE | Categories  - Redundant  = Num
+> . Coefs                                                                      
+>         |
+-----------------------------------------------+-------------------------------
+> --------|
+     province_num#category_num#level3_name_num |      1763           0        1
+> 763                                                                          
+>                                                                              
+>         |
+                province_num#year#category_num |       459          58         
+> 401                                                                          
+>                                                                              
+>         |
+                            hightitle_num#year |      1035           9        1
+> 026                                                                          
+>        ?                                                                     
+>         |
+-------------------------------------------------------------------------------
+> --------+
+? = number of redundant parameters may be higher
+
+. eststo t5c3: reghdfe min_num   DID treat1, absorb(province_num#year#category_
+> num hightitle_num#year) vce(robust)
+(dropped 2 singleton observations)
+(MWFE estimator converged in 6 iterations)
+
+HDFE Linear regression                            Number of obs   =    237,727
+Absorbing 2 HDFE groups                           F(   2, 236240) =     676.53
+                                                  Prob > F        =     0.0000
+                                                  R-squared       =     0.9417
+                                                  Adj R-squared   =     0.9413
+                                                  Within R-sq.    =     0.0055
+                                                  Root MSE        =    13.7578
+
+------------------------------------------------------------------------------
+             |               Robust
+     min_num | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+         DID |  -4.560644   .2422068   -18.83   0.000    -5.035363   -4.085925
+      treat1 |  -2.171228   .1235705   -17.57   0.000    -2.413424   -1.929033
+       _cons |   582.0573   .0293494  2.0e+04   0.000     581.9998    582.1148
+------------------------------------------------------------------------------
+
+Absorbed degrees of freedom:
+----------------------------------------------------------------------------+
+                        Absorbed FE | Categories  - Redundant  = Num. Coefs |
+------------------------------------+---------------------------------------|
+     province_num#year#category_num |       459           0         459     |
+                 hightitle_num#year |      1035           9        1026     |
+----------------------------------------------------------------------------+
+
+. eststo t5c4: reghdfe min_num   DID,        absorb($FE) vce(robust)
+(dropped 20 singleton observations)
+(MWFE estimator converged in 8 iterations)
+
+HDFE Linear regression                            Number of obs   =    237,709
+Absorbing 3 HDFE groups                           F(   1, 234518) =     427.40
+                                                  Prob > F        =     0.0000
+                                                  R-squared       =     0.9496
+                                                  Adj R-squared   =     0.9489
+                                                  Within R-sq.    =     0.0017
+                                                  Root MSE        =    12.8330
+
+------------------------------------------------------------------------------
+             |               Robust
+     min_num | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+         DID |  -4.782681   .2313408   -20.67   0.000    -5.236103   -4.329259
+       _cons |   581.9106   .0268045  2.2e+04   0.000     581.8581    581.9632
+------------------------------------------------------------------------------
+
+Absorbed degrees of freedom:
+-------------------------------------------------------------------------------
+> --------+
+                                   Absorbed FE | Categories  - Redundant  = Num
+> . Coefs                                                                      
+>         |
+-----------------------------------------------+-------------------------------
+> --------|
+     province_num#category_num#level3_name_num |      1763           0        1
+> 763                                                                          
+>                                                                              
+>         |
+                province_num#year#category_num |       459          58         
+> 401                                                                          
+>                                                                              
+>         |
+                            hightitle_num#year |      1035           9        1
+> 026                                                                          
+>        ?                                                                     
+>         |
+-------------------------------------------------------------------------------
+> --------+
+? = number of redundant parameters may be higher
+
+. 
+. esttab t5c1 t5c2 t5c3 t5c4 using "$tables/table5_allprov.tex", replace ///
+>         b(4) se(4) star(* 0.10 ** 0.05 *** 0.01) ///
+>         keep(DID treat1) ///
+>         mtitles("Rank ratio" "Rank ratio" "Min. score" "Min. score") ///
+>         coeflabels(DID "Treat $\times$ Post" treat1 "Treat") ///
+>         stats(N r2, labels("Observations" "R-squared") fmt(0 3)) ///
+>         booktabs nonotes label
+(file E:/小创code/major-choice-replication/output/tables/table5_allprov.tex
+    not found)
+(output written to E:/小创code/major-choice-replication/output/tables/table5_al
+> lprov.tex)
+
+. 
+. esttab t5c1 t5c2 t5c3 t5c4, b(4) se(4) keep(DID treat1) stats(N r2)
+
+----------------------------------------------------------------------------
+                      (1)             (2)             (3)             (4)   
+                ratio_num       ratio_num         min_num         min_num   
+----------------------------------------------------------------------------
+DID                0.0268***       0.0279***      -4.5606***      -4.7827***
+                 (0.0017)        (0.0017)        (0.2422)        (0.2313)   
+
+treat1             0.0087***                      -2.1712***                
+                 (0.0009)                        (0.1236)                   
+----------------------------------------------------------------------------
+N             237670.0000     237652.0000     237727.0000     237709.0000   
+r2                 0.8319          0.8482          0.9417          0.9496   
+----------------------------------------------------------------------------
+Standard errors in parentheses
+* p<0.05, ** p<0.01, *** p<0.001
+
+. 
+. log close
+      name:  <unnamed>
+       log:  E:/小创code/major-choice-replication/output/logs/06_main.log
+  log type:  text
+ closed on:  10 Sep 2026, 00:15:04
+-------------------------------------------------------------------------------
+
+. 
+end of do-file
+
+. do "$root/code/tables/08_mechanisms.do"
+
+. clear
+
+. * Globals come from config.do, which run_all.do loads first.
+. * To run this file on its own, run config.do in the same session.
+. 
+. log using "$logs/08_mechanisms.log", replace text
+(file E:/小创code/major-choice-replication/output/logs/08_mechanisms.log not
+    found)
+-------------------------------------------------------------------------------
+      name:  <unnamed>
+       log:  E:/小创code/major-choice-replication/output/logs/08_mechanisms.log
+  log type:  text
+ opened on:  10 Sep 2026, 00:15:04
+
+. 
+. ****************Table 7, by university tier
+. use "$data/analysis.dta", clear
+
+. keep if special_prov == 0
+(44,597 observations deleted)
+
+. keep if keepA == 1
+(7,174 observations deleted)
+
+. 
+. tab f985, missing
+
+       f985 |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          1 |     57,739       31.05       31.05
+          2 |    127,528       68.57       99.62
+          . |        715        0.38      100.00
+------------+-----------------------------------
+      Total |    185,982      100.00
+
+. tab f211, missing
+
+       f211 |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          1 |    125,690       67.58       67.58
+          2 |     59,577       32.03       99.62
+          . |        715        0.38      100.00
+------------+-----------------------------------
+      Total |    185,982      100.00
+
+. 
+. reghdfe ratio_num DID if f985 == 1, absorb($FE) vce(robust)
+(dropped 41 singleton observations)
+(MWFE estimator converged in 9 iterations)
+
+HDFE Linear regression                            Number of obs   =     57,659
+Absorbing 3 HDFE groups                           F(   1,  55737) =      26.56
+                                                  Prob > F        =     0.0000
+                                                  R-squared       =     0.7192
+                                                  Adj R-squared   =     0.7096
+                                                  Within R-sq.    =     0.0005
+                                                  Root MSE        =     0.0400
+
+------------------------------------------------------------------------------
+             |               Robust
+   ratio_num | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+         DID |   .0083898   .0016278     5.15   0.000     .0051993    .0115803
+       _cons |   .0823693     .00017   484.47   0.000     .0820361    .0827026
+------------------------------------------------------------------------------
+
+Absorbed degrees of freedom:
+-------------------------------------------------------------------------------
+> --------+
+                                   Absorbed FE | Categories  - Redundant  = Num
+> . Coefs                                                                      
+>         |
+-----------------------------------------------+-------------------------------
+> --------|
+     province_num#category_num#level3_name_num |      1247           0        1
+> 247                                                                          
+>                                                                              
+>         |
+                province_num#year#category_num |       387          46         
+> 341                                                                          
+>                                                                              
+>         |
+                            hightitle_num#year |       342           9         
+> 333                                                                          
+>        ?                                                                     
+>         |
+-------------------------------------------------------------------------------
+> --------+
+? = number of redundant parameters may be higher
+
+. reghdfe ratio_num DID if f985 == 2, absorb($FE) vce(robust)
+(dropped 13 singleton observations)
+(MWFE estimator converged in 8 iterations)
+
+HDFE Linear regression                            Number of obs   =    127,478
+Absorbing 3 HDFE groups                           F(   1, 125117) =     183.68
+                                                  Prob > F        =     0.0000
+                                                  R-squared       =     0.8277
+                                                  Adj R-squared   =     0.8245
+                                                  Within R-sq.    =     0.0017
+                                                  Root MSE        =     0.0950
+
+------------------------------------------------------------------------------
+             |               Robust
+   ratio_num | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+         DID |   .0341207   .0025176    13.55   0.000     .0291862    .0390552
+       _cons |   .3545501   .0002714  1306.25   0.000     .3540181    .3550821
+------------------------------------------------------------------------------
+
+Absorbed degrees of freedom:
+-------------------------------------------------------------------------------
+> --------+
+                                   Absorbed FE | Categories  - Redundant  = Num
+> . Coefs                                                                      
+>         |
+-----------------------------------------------+-------------------------------
+> --------|
+     province_num#category_num#level3_name_num |      1339           0        1
+> 339                                                                          
+>                                                                              
+>         |
+                province_num#year#category_num |       388          46         
+> 342                                                                          
+>                                                                              
+>         |
+                            hightitle_num#year |       688           9         
+> 679                                                                          
+>        ?                                                                     
+>         |
+-------------------------------------------------------------------------------
+> --------+
+? = number of redundant parameters may be higher
+
+. reghdfe ratio_num DID if f211 == 1, absorb($FE) vce(robust)
+(dropped 18 singleton observations)
+(MWFE estimator converged in 8 iterations)
+
+HDFE Linear regression                            Number of obs   =    125,609
+Absorbing 3 HDFE groups                           F(   1, 123259) =     139.88
+                                                  Prob > F        =     0.0000
+                                                  R-squared       =     0.8401
+                                                  Adj R-squared   =     0.8370
+                                                  Within R-sq.    =     0.0012
+                                                  Root MSE        =     0.0671
+
+------------------------------------------------------------------------------
+             |               Robust
+   ratio_num | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+         DID |   .0207008   .0017503    11.83   0.000     .0172703    .0241313
+       _cons |   .1747746   .0001926   907.45   0.000     .1743971    .1751521
+------------------------------------------------------------------------------
+
+Absorbed degrees of freedom:
+-------------------------------------------------------------------------------
+> --------+
+                                   Absorbed FE | Categories  - Redundant  = Num
+> . Coefs                                                                      
+>         |
+-----------------------------------------------+-------------------------------
+> --------|
+     province_num#category_num#level3_name_num |      1336           0        1
+> 336                                                                          
+>                                                                              
+>         |
+                province_num#year#category_num |       388          46         
+> 342                                                                          
+>                                                                              
+>         |
+                            hightitle_num#year |       680           9         
+> 671                                                                          
+>        ?                                                                     
+>         |
+-------------------------------------------------------------------------------
+> --------+
+? = number of redundant parameters may be higher
+
+. reghdfe ratio_num DID if f211 == 2, absorb($FE) vce(robust)
+(dropped 28 singleton observations)
+(MWFE estimator converged in 8 iterations)
+
+HDFE Linear regression                            Number of obs   =     59,536
+Absorbing 3 HDFE groups                           F(   1,  57584) =      88.42
+                                                  Prob > F        =     0.0000
+                                                  R-squared       =     0.7874
+                                                  Adj R-squared   =     0.7802
+                                                  Within R-sq.    =     0.0018
+                                                  Root MSE        =     0.1021
+
+------------------------------------------------------------------------------
+             |               Robust
+   ratio_num | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+         DID |   .0392549   .0041746     9.40   0.000     .0310727     .047437
+       _cons |   .4700836   .0004271  1100.72   0.000     .4692465    .4709206
+------------------------------------------------------------------------------
+
+Absorbed degrees of freedom:
+-------------------------------------------------------------------------------
+> --------+
+                                   Absorbed FE | Categories  - Redundant  = Num
+> . Coefs                                                                      
+>         |
+-----------------------------------------------+-------------------------------
+> --------|
+     province_num#category_num#level3_name_num |      1268           0        1
+> 268                                                                          
+>                                                                              
+>         |
+                province_num#year#category_num |       388          46         
+> 342                                                                          
+>                                                                              
+>         |
+                            hightitle_num#year |       350           9         
+> 341                                                                          
+>        ?                                                                     
+>         |
+-------------------------------------------------------------------------------
+> --------+
+? = number of redundant parameters may be higher
+
+. 
+. *The reported difference comes from the pooled sample with treatment interact
+> ed with tier
+. gen byte d985 = (f985 == 1) if !missing(f985)
+(715 missing values generated)
+
+. gen byte d211 = (f211 == 1) if !missing(f211)
+(715 missing values generated)
+
+. 
+. gen DID_985   = DID    * d985
+(715 missing values generated)
+
+. gen treat_985 = treat1 * d985
+(715 missing values generated)
+
+. gen DID_211   = DID    * d211
+(715 missing values generated)
+
+. gen treat_211 = treat1 * d211
+(715 missing values generated)
+
+. 
+. reghdfe ratio_num DID DID_985 treat_985, absorb($FE) vce(robust)
+(dropped 18 singleton observations)
+(MWFE estimator converged in 8 iterations)
+
+HDFE Linear regression                            Number of obs   =    185,173
+Absorbing 3 HDFE groups                           F(   3, 182458) =      69.56
+                                                  Prob > F        =     0.0000
+                                                  R-squared       =     0.8526
+                                                  Adj R-squared   =     0.8504
+                                                  Within R-sq.    =     0.0014
+                                                  Root MSE        =     0.0891
+
+------------------------------------------------------------------------------
+             |               Robust
+   ratio_num | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+         DID |   .0338683   .0025423    13.32   0.000     .0288854    .0388511
+     DID_985 |  -.0205938   .0033575    -6.13   0.000    -.0271743   -.0140132
+   treat_985 |   .0007427    .001938     0.38   0.702    -.0030559    .0045412
+       _cons |   .2697065   .0002176  1239.63   0.000     .2692801    .2701329
+------------------------------------------------------------------------------
+
+Absorbed degrees of freedom:
+-------------------------------------------------------------------------------
+> --------+
+                                   Absorbed FE | Categories  - Redundant  = Num
+> . Coefs                                                                      
+>         |
+-----------------------------------------------+-------------------------------
+> --------|
+     province_num#category_num#level3_name_num |      1349           0        1
+> 349                                                                          
+>                                                                              
+>         |
+                province_num#year#category_num |       388          46         
+> 342                                                                          
+>                                                                              
+>         |
+                            hightitle_num#year |      1030           9        1
+> 021                                                                          
+>        ?                                                                     
+>         |
+-------------------------------------------------------------------------------
+> --------+
+? = number of redundant parameters may be higher
+
+. test DID_985 = 0
+
+ ( 1)  DID_985 = 0
+
+       F(  1,182458) =   37.62
+            Prob > F =    0.0000
+
+. 
+. reghdfe ratio_num DID DID_211 treat_211, absorb($FE) vce(robust)
+(dropped 18 singleton observations)
+(MWFE estimator converged in 8 iterations)
+
+HDFE Linear regression                            Number of obs   =    185,173
+Absorbing 3 HDFE groups                           F(   3, 182458) =      80.46
+                                                  Prob > F        =     0.0000
+                                                  R-squared       =     0.8526
+                                                  Adj R-squared   =     0.8504
+                                                  Within R-sq.    =     0.0017
+                                                  Root MSE        =     0.0891
+
+------------------------------------------------------------------------------
+             |               Robust
+   ratio_num | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+         DID |   .0427376   .0046343     9.22   0.000     .0336545    .0518206
+     DID_211 |  -.0218432   .0049403    -4.42   0.000     -.031526   -.0121604
+   treat_211 |  -.0073635   .0027636    -2.66   0.008      -.01278   -.0019469
+       _cons |   .2700945   .0002611  1034.37   0.000     .2695827    .2706063
+------------------------------------------------------------------------------
+
+Absorbed degrees of freedom:
+-------------------------------------------------------------------------------
+> --------+
+                                   Absorbed FE | Categories  - Redundant  = Num
+> . Coefs                                                                      
+>         |
+-----------------------------------------------+-------------------------------
+> --------|
+     province_num#category_num#level3_name_num |      1349           0        1
+> 349                                                                          
+>                                                                              
+>         |
+                province_num#year#category_num |       388          46         
+> 342                                                                          
+>                                                                              
+>         |
+                            hightitle_num#year |      1030           9        1
+> 021                                                                          
+>        ?                                                                     
+>         |
+-------------------------------------------------------------------------------
+> --------+
+? = number of redundant parameters may be higher
+
+. test DID_211 = 0
+
+ ( 1)  DID_211 = 0
+
+       F(  1,182458) =   19.55
+            Prob > F =    0.0000
+
+. 
+. *Treated share by tier, to show the contrast is not compositional
+. tabstat treat1, by(f985) statistics(mean N)
+
+Summary for variables: treat1
+Group variable: f985 (f985)
+
+    f985 |      Mean         N
+---------+--------------------
+       1 |  .0685845     57739
+       2 |  .0724312    127528
+---------+--------------------
+   Total |  .0712323    185267
+------------------------------
+
+. tabstat treat1, by(f211) statistics(mean N)
+
+Summary for variables: treat1
+Group variable: f211 (f211)
+
+    f211 |      Mean         N
+---------+--------------------
+       1 |  .0737768    125690
+       2 |  .0658643     59577
+---------+--------------------
+   Total |  .0712323    185267
+------------------------------
+
+. 
+. ****************Table 8 panel A, by admission competition
+. use "$data/analysis.dta", clear
+
+. keep if special_prov == 0
+(44,597 observations deleted)
+
+. keep if keepA == 1
+(7,174 observations deleted)
+
+. 
+. reghdfe ratio_num DID if high_invo == 1, absorb($FE) vce(robust)
+(dropped 13 singleton observations)
+(MWFE estimator converged in 8 iterations)
+
+HDFE Linear regression                            Number of obs   =     74,643
+Absorbing 3 HDFE groups                           F(   1,  72973) =      77.90
+                                                  Prob > F        =     0.0000
+                                                  R-squared       =     0.8695
+                                                  Adj R-squared   =     0.8665
+                                                  Within R-sq.    =     0.0013
+                                                  Root MSE        =     0.0824
+
+------------------------------------------------------------------------------
+             |               Robust
+   ratio_num | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+         DID |   .0277896   .0031487     8.83   0.000     .0216183     .033961
+       _cons |   .2664641   .0003066   869.00   0.000     .2658631    .2670651
+------------------------------------------------------------------------------
+
+Absorbed degrees of freedom:
+-------------------------------------------------------------------------------
+> --------+
+                                   Absorbed FE | Categories  - Redundant  = Num
+> . Coefs                                                                      
+>         |
+-----------------------------------------------+-------------------------------
+> --------|
+     province_num#category_num#level3_name_num |       529           0         
+> 529                                                                          
+>                                                                              
+>         |
+                province_num#year#category_num |       152          18         
+> 134                                                                          
+>                                                                              
+>         |
+                            hightitle_num#year |      1015           9        1
+> 006                                                                          
+>        ?                                                                     
+>         |
+-------------------------------------------------------------------------------
+> --------+
+? = number of redundant parameters may be higher
+
+. reghdfe ratio_num DID if mid_invo  == 1, absorb($FE) vce(robust)
+(dropped 10 singleton observations)
+(MWFE estimator converged in 8 iterations)
+
+HDFE Linear regression                            Number of obs   =    100,179
+Absorbing 3 HDFE groups                           F(   1,  98279) =     134.58
+                                                  Prob > F        =     0.0000
+                                                  R-squared       =     0.8570
+                                                  Adj R-squared   =     0.8542
+                                                  Within R-sq.    =     0.0015
+                                                  Root MSE        =     0.0886
+
+------------------------------------------------------------------------------
+             |               Robust
+   ratio_num | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+         DID |   .0300143   .0025872    11.60   0.000     .0249433    .0350852
+       _cons |   .2718615    .000286   950.67   0.000      .271301     .272422
+------------------------------------------------------------------------------
+
+Absorbed degrees of freedom:
+-------------------------------------------------------------------------------
+> --------+
+                                   Absorbed FE | Categories  - Redundant  = Num
+> . Coefs                                                                      
+>         |
+-----------------------------------------------+-------------------------------
+> --------|
+     province_num#category_num#level3_name_num |       706           0         
+> 706                                                                          
+>                                                                              
+>         |
+                province_num#year#category_num |       202          24         
+> 178                                                                          
+>                                                                              
+>         |
+                            hightitle_num#year |      1024           9        1
+> 015                                                                          
+>        ?                                                                     
+>         |
+-------------------------------------------------------------------------------
+> --------+
+? = number of redundant parameters may be higher
+
+. reghdfe ratio_num DID if low_invo  == 1, absorb($FE) vce(robust)
+(dropped 26 singleton observations)
+(MWFE estimator converged in 10 iterations)
+
+HDFE Linear regression                            Number of obs   =     11,035
+Absorbing 3 HDFE groups                           F(   1,   9961) =       8.92
+                                                  Prob > F        =     0.0028
+                                                  R-squared       =     0.8691
+                                                  Adj R-squared   =     0.8550
+                                                  Within R-sq.    =     0.0008
+                                                  Root MSE        =     0.0920
+
+------------------------------------------------------------------------------
+             |               Robust
+   ratio_num | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+         DID |    .021864   .0073199     2.99   0.003     .0075155    .0362126
+       _cons |   .2634628   .0009046   291.24   0.000     .2616896    .2652361
+------------------------------------------------------------------------------
+
+Absorbed degrees of freedom:
+-------------------------------------------------------------------------------
+> --------+
+                                   Absorbed FE | Categories  - Redundant  = Num
+> . Coefs                                                                      
+>         |
+-----------------------------------------------+-------------------------------
+> --------|
+     province_num#category_num#level3_name_num |       114           0         
+> 114                                                                          
+>                                                                              
+>         |
+                province_num#year#category_num |        34           4         
+>  30                                                                          
+>                                                                              
+>         |
+                            hightitle_num#year |       938           9         
+> 929                                                                          
+>        ?                                                                     
+>         |
+-------------------------------------------------------------------------------
+> --------+
+? = number of redundant parameters may be higher
+
+. 
+. gen DID_high   = DID    * high_invo
+
+. gen treat_high = treat1 * high_invo
+
+. 
+. reghdfe ratio_num DID DID_high treat_high if high_invo == 1 | low_invo == 1, 
+> absorb($FE) vce(robust)
+(dropped 13 singleton observations)
+(MWFE estimator converged in 8 iterations)
+note: treat_high is probably collinear with the fixed effects (all partialled-o
+> ut values are close to zero; tol = 1.0e-09)
+
+HDFE Linear regression                            Number of obs   =     85,704
+Absorbing 3 HDFE groups                           F(   2,  83887) =      42.75
+                                                  Prob > F        =     0.0000
+                                                  R-squared       =     0.8611
+                                                  Adj R-squared   =     0.8581
+                                                  Within R-sq.    =     0.0012
+                                                  Root MSE        =     0.0858
+
+------------------------------------------------------------------------------
+             |               Robust
+   ratio_num | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+         DID |   .0231046   .0075973     3.04   0.002      .008214    .0379952
+    DID_high |   .0045967   .0081915     0.56   0.575    -.0114585     .020652
+  treat_high |          0  (omitted)
+       _cons |   .2660999   .0002985   891.41   0.000     .2655148     .266685
+------------------------------------------------------------------------------
+
+Absorbed degrees of freedom:
+-------------------------------------------------------------------------------
+> --------+
+                                   Absorbed FE | Categories  - Redundant  = Num
+> . Coefs                                                                      
+>         |
+-----------------------------------------------+-------------------------------
+> --------|
+     province_num#category_num#level3_name_num |       643           0         
+> 643                                                                          
+>                                                                              
+>         |
+                province_num#year#category_num |       186          22         
+> 164                                                                          
+>                                                                              
+>         |
+                            hightitle_num#year |      1017           9        1
+> 008                                                                          
+>        ?                                                                     
+>         |
+-------------------------------------------------------------------------------
+> --------+
+? = number of redundant parameters may be higher
+
+. test DID_high = 0
+
+ ( 1)  DID_high = 0
+
+       F(  1, 83887) =    0.31
+            Prob > F =    0.5747
+
+. 
+. ****************Table 8 panel B, by influencer audience density
+. use "$data/analysis.dta", clear
+
+. keep if special_prov == 0
+(44,597 observations deleted)
+
+. keep if keepA == 1
+(7,174 observations deleted)
+
+. 
+. reghdfe ratio_num DID if high_den == 0, absorb($FE) vce(robust)
+(dropped 14 singleton observations)
+(MWFE estimator converged in 8 iterations)
+
+HDFE Linear regression                            Number of obs   =     89,419
+Absorbing 3 HDFE groups                           F(   1,  87538) =      86.33
+                                                  Prob > F        =     0.0000
+                                                  R-squared       =     0.8548
+                                                  Adj R-squared   =     0.8517
+                                                  Within R-sq.    =     0.0011
+                                                  Root MSE        =     0.0907
+
+------------------------------------------------------------------------------
+             |               Robust
+   ratio_num | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+         DID |   .0277447   .0029861     9.29   0.000     .0218919    .0335974
+       _cons |   .2820308   .0003097   910.64   0.000     .2814238    .2826379
+------------------------------------------------------------------------------
+
+Absorbed degrees of freedom:
+-------------------------------------------------------------------------------
+> --------+
+                                   Absorbed FE | Categories  - Redundant  = Num
+> . Coefs                                                                      
+>         |
+-----------------------------------------------+-------------------------------
+> --------|
+     province_num#category_num#level3_name_num |       696           0         
+> 696                                                                          
+>                                                                              
+>         |
+                province_num#year#category_num |       200          24         
+> 176                                                                          
+>                                                                              
+>         |
+                            hightitle_num#year |      1017           9        1
+> 008                                                                          
+>        ?                                                                     
+>         |
+-------------------------------------------------------------------------------
+> --------+
+? = number of redundant parameters may be higher
+
+. reghdfe ratio_num DID if high_den == 1, absorb($FE) vce(robust)
+(dropped 15 singleton observations)
+(MWFE estimator converged in 8 iterations)
+
+HDFE Linear regression                            Number of obs   =     96,458
+Absorbing 3 HDFE groups                           F(   1,  94626) =     127.01
+                                                  Prob > F        =     0.0000
+                                                  R-squared       =     0.8598
+                                                  Adj R-squared   =     0.8570
+                                                  Within R-sq.    =     0.0015
+                                                  Root MSE        =     0.0848
+
+------------------------------------------------------------------------------
+             |               Robust
+   ratio_num | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+         DID |   .0289046   .0025647    11.27   0.000     .0238777    .0339314
+       _cons |   .2573332   .0002784   924.31   0.000     .2567875    .2578789
+------------------------------------------------------------------------------
+
+Absorbed degrees of freedom:
+-------------------------------------------------------------------------------
+> --------+
+                                   Absorbed FE | Categories  - Redundant  = Num
+> . Coefs                                                                      
+>         |
+-----------------------------------------------+-------------------------------
+> --------|
+     province_num#category_num#level3_name_num |       653           0         
+> 653                                                                          
+>                                                                              
+>         |
+                province_num#year#category_num |       188          22         
+> 166                                                                          
+>                                                                              
+>         |
+                            hightitle_num#year |      1021           9        1
+> 012                                                                          
+>        ?                                                                     
+>         |
+-------------------------------------------------------------------------------
+> --------+
+? = number of redundant parameters may be higher
+
+. 
+. gen DID_den   = DID    * high_den
+
+. gen treat_den = treat1 * high_den
+
+. 
+. reghdfe ratio_num DID DID_den treat_den, absorb($FE) vce(robust)
+(dropped 18 singleton observations)
+(MWFE estimator converged in 8 iterations)
+note: treat_den is probably collinear with the fixed effects (all partialled-ou
+> t values are close to zero; tol = 1.0e-09)
+
+HDFE Linear regression                            Number of obs   =    185,888
+Absorbing 3 HDFE groups                           F(   2, 183172) =     105.92
+                                                  Prob > F        =     0.0000
+                                                  R-squared       =     0.8525
+                                                  Adj R-squared   =     0.8503
+                                                  Within R-sq.    =     0.0013
+                                                  Root MSE        =     0.0890
+
+------------------------------------------------------------------------------
+             |               Robust
+   ratio_num | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+         DID |    .028463   .0029887     9.52   0.000     .0226052    .0343207
+     DID_den |   .0001557   .0039104     0.04   0.968    -.0075086    .0078201
+   treat_den |          0  (omitted)
+       _cons |   .2692024   .0002107  1277.86   0.000     .2687895    .2696153
+------------------------------------------------------------------------------
+
+Absorbed degrees of freedom:
+-------------------------------------------------------------------------------
+> --------+
+                                   Absorbed FE | Categories  - Redundant  = Num
+> . Coefs                                                                      
+>         |
+-----------------------------------------------+-------------------------------
+> --------|
+     province_num#category_num#level3_name_num |      1349           0        1
+> 349                                                                          
+>                                                                              
+>         |
+                province_num#year#category_num |       388          46         
+> 342                                                                          
+>                                                                              
+>         |
+                            hightitle_num#year |      1032           9        1
+> 023                                                                          
+>        ?                                                                     
+>         |
+-------------------------------------------------------------------------------
+> --------+
+? = number of redundant parameters may be higher
+
+. test DID_den = 0
+
+ ( 1)  DID_den = 0
+
+       F(  1,183172) =    0.00
+            Prob > F =    0.9682
+
+. 
+. gen DDD      = density * treat1 * post
+
+. gen den_post = density * post
+
+. gen den_trt  = density * treat1
+
+. 
+. reghdfe ratio_num DDD DID den_post den_trt treat1, absorb($FE) vce(robust)
+(dropped 18 singleton observations)
+(MWFE estimator converged in 8 iterations)
+note: den_post is probably collinear with the fixed effects (all partialled-out
+>  values are close to zero; tol = 1.0e-09)
+note: den_trt is probably collinear with the fixed effects (all partialled-out 
+> values are close to zero; tol = 1.0e-09)
+note: treat1 is probably collinear with the fixed effects (all partialled-out v
+> alues are close to zero; tol = 1.0e-09)
+
+HDFE Linear regression                            Number of obs   =    185,888
+Absorbing 3 HDFE groups                           F(   2, 183172) =     105.52
+                                                  Prob > F        =     0.0000
+                                                  R-squared       =     0.8525
+                                                  Adj R-squared   =     0.8503
+                                                  Within R-sq.    =     0.0013
+                                                  Root MSE        =     0.0890
+
+------------------------------------------------------------------------------
+             |               Robust
+   ratio_num | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+         DDD |  -.0006977   .0008003    -0.87   0.383    -.0022664    .0008709
+         DID |     .03225   .0049033     6.58   0.000     .0226396    .0418605
+    den_post |          0  (omitted)
+     den_trt |          0  (omitted)
+      treat1 |          0  (omitted)
+       _cons |   .2692019   .0002107  1277.84   0.000      .268789    .2696148
+------------------------------------------------------------------------------
+
+Absorbed degrees of freedom:
+-------------------------------------------------------------------------------
+> --------+
+                                   Absorbed FE | Categories  - Redundant  = Num
+> . Coefs                                                                      
+>         |
+-----------------------------------------------+-------------------------------
+> --------|
+     province_num#category_num#level3_name_num |      1349           0        1
+> 349                                                                          
+>                                                                              
+>         |
+                province_num#year#category_num |       388          46         
+> 342                                                                          
+>                                                                              
+>         |
+                            hightitle_num#year |      1032           9        1
+> 023                                                                          
+>        ?                                                                     
+>         |
+-------------------------------------------------------------------------------
+> --------+
+? = number of redundant parameters may be higher
+
+. 
+. ****************Same splits with the six provinces reinstated
+. use "$data/analysis.dta", clear
+
+. keep if keepA == 1
+(7,174 observations deleted)
+
+. 
+. reghdfe ratio_num DID if high_invo == 1, absorb($FE) vce(robust)
+(dropped 12 singleton observations)
+(MWFE estimator converged in 8 iterations)
+
+HDFE Linear regression                            Number of obs   =     86,852
+Absorbing 3 HDFE groups                           F(   1,  85088) =      67.51
+                                                  Prob > F        =     0.0000
+                                                  R-squared       =     0.8615
+                                                  Adj R-squared   =     0.8586
+                                                  Within R-sq.    =     0.0009
+                                                  Root MSE        =     0.0858
+
+------------------------------------------------------------------------------
+             |               Robust
+   ratio_num | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+         DID |   .0240388   .0029258     8.22   0.000     .0183043    .0297733
+       _cons |   .2674325   .0002958   903.96   0.000     .2668526    .2680123
+------------------------------------------------------------------------------
+
+Absorbed degrees of freedom:
+-------------------------------------------------------------------------------
+> --------+
+                                   Absorbed FE | Categories  - Redundant  = Num
+> . Coefs                                                                      
+>         |
+-----------------------------------------------+-------------------------------
+> --------|
+     province_num#category_num#level3_name_num |       609           0         
+> 609                                                                          
+>                                                                              
+>         |
+                province_num#year#category_num |       162          20         
+> 142                                                                          
+>                                                                              
+>         |
+                            hightitle_num#year |      1021           9        1
+> 012                                                                          
+>        ?                                                                     
+>         |
+-------------------------------------------------------------------------------
+> --------+
+? = number of redundant parameters may be higher
+
+. reghdfe ratio_num DID if mid_invo  == 1, absorb($FE) vce(robust)
+(dropped 11 singleton observations)
+(MWFE estimator converged in 8 iterations)
+
+HDFE Linear regression                            Number of obs   =    123,801
+Absorbing 3 HDFE groups                           F(   1, 121681) =     167.22
+                                                  Prob > F        =     0.0000
+                                                  R-squared       =     0.8493
+                                                  Adj R-squared   =     0.8467
+                                                  Within R-sq.    =     0.0014
+                                                  Root MSE        =     0.0904
+
+------------------------------------------------------------------------------
+             |               Robust
+   ratio_num | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+         DID |   .0303125   .0023441    12.93   0.000     .0257181    .0349069
+       _cons |    .264531   .0002618  1010.42   0.000     .2640178    .2650441
+------------------------------------------------------------------------------
+
+Absorbed degrees of freedom:
+-------------------------------------------------------------------------------
+> --------+
+                                   Absorbed FE | Categories  - Redundant  = Num
+> . Coefs                                                                      
+>         |
+-----------------------------------------------+-------------------------------
+> --------|
+     province_num#category_num#level3_name_num |       902           0         
+> 902                                                                          
+>                                                                              
+>         |
+                province_num#year#category_num |       226          30         
+> 196                                                                          
+>                                                                              
+>         |
+                            hightitle_num#year |      1030           9        1
+> 021                                                                          
+>        ?                                                                     
+>         |
+-------------------------------------------------------------------------------
+> --------+
+? = number of redundant parameters may be higher
+
+. reghdfe ratio_num DID if low_invo  == 1, absorb($FE) vce(robust)
+(dropped 14 singleton observations)
+(MWFE estimator converged in 9 iterations)
+
+HDFE Linear regression                            Number of obs   =     19,808
+Absorbing 3 HDFE groups                           F(   1,  18529) =      13.80
+                                                  Prob > F        =     0.0002
+                                                  R-squared       =     0.8903
+                                                  Adj R-squared   =     0.8827
+                                                  Within R-sq.    =     0.0006
+                                                  Root MSE        =     0.0841
+
+------------------------------------------------------------------------------
+             |               Robust
+   ratio_num | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+         DID |   .0196816   .0052975     3.72   0.000      .009298    .0300652
+       _cons |   .2673487   .0006134   435.84   0.000     .2661463     .268551
+------------------------------------------------------------------------------
+
+Absorbed degrees of freedom:
+-------------------------------------------------------------------------------
+> --------+
+                                   Absorbed FE | Categories  - Redundant  = Num
+> . Coefs                                                                      
+>         |
+-----------------------------------------------+-------------------------------
+> --------|
+     province_num#category_num#level3_name_num |       251           0         
+> 251                                                                          
+>                                                                              
+>         |
+                province_num#year#category_num |        55           8         
+>  47                                                                          
+>                                                                              
+>         |
+                            hightitle_num#year |       989           9         
+> 980                                                                          
+>        ?                                                                     
+>         |
+-------------------------------------------------------------------------------
+> --------+
+? = number of redundant parameters may be higher
+
+. reghdfe ratio_num DID if high_den == 0, absorb($FE) vce(robust)
+(dropped 14 singleton observations)
+(MWFE estimator converged in 8 iterations)
+
+HDFE Linear regression                            Number of obs   =    108,183
+Absorbing 3 HDFE groups                           F(   1, 105991) =     106.81
+                                                  Prob > F        =     0.0000
+                                                  R-squared       =     0.8604
+                                                  Adj R-squared   =     0.8575
+                                                  Within R-sq.    =     0.0011
+                                                  Root MSE        =     0.0891
+
+------------------------------------------------------------------------------
+             |               Robust
+   ratio_num | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+         DID |   .0280675   .0027158    10.33   0.000     .0227446    .0333905
+       _cons |   .2800699   .0002762  1013.96   0.000     .2795285    .2806113
+------------------------------------------------------------------------------
+
+Absorbed degrees of freedom:
+-------------------------------------------------------------------------------
+> --------+
+                                   Absorbed FE | Categories  - Redundant  = Num
+> . Coefs                                                                      
+>         |
+-----------------------------------------------+-------------------------------
+> --------|
+     province_num#category_num#level3_name_num |       970           0         
+> 970                                                                          
+>                                                                              
+>         |
+                province_num#year#category_num |       234          32         
+> 202                                                                          
+>                                                                              
+>         |
+                            hightitle_num#year |      1028           9        1
+> 019                                                                          
+>        ?                                                                     
+>         |
+-------------------------------------------------------------------------------
+> --------+
+? = number of redundant parameters may be higher
+
+. reghdfe ratio_num DID if high_den == 1, absorb($FE) vce(robust)
+(dropped 15 singleton observations)
+(MWFE estimator converged in 8 iterations)
+
+HDFE Linear regression                            Number of obs   =    122,286
+Absorbing 3 HDFE groups                           F(   1, 120292) =     130.26
+                                                  Prob > F        =     0.0000
+                                                  R-squared       =     0.8462
+                                                  Adj R-squared   =     0.8437
+                                                  Within R-sq.    =     0.0011
+                                                  Root MSE        =     0.0894
+
+------------------------------------------------------------------------------
+             |               Robust
+   ratio_num | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+         DID |   .0262963    .002304    11.41   0.000     .0217804    .0308122
+       _cons |   .2533037   .0002601   973.99   0.000      .252794    .2538134
+------------------------------------------------------------------------------
+
+Absorbed degrees of freedom:
+-------------------------------------------------------------------------------
+> --------+
+                                   Absorbed FE | Categories  - Redundant  = Num
+> . Coefs                                                                      
+>         |
+-----------------------------------------------+-------------------------------
+> --------|
+     province_num#category_num#level3_name_num |       792           0         
+> 792                                                                          
+>                                                                              
+>         |
+                province_num#year#category_num |       209          26         
+> 183                                                                          
+>                                                                              
+>         |
+                            hightitle_num#year |      1027           9        1
+> 018                                                                          
+>        ?                                                                     
+>         |
+-------------------------------------------------------------------------------
+> --------+
+? = number of redundant parameters may be higher
+
+. 
+. ****************Intensity within the negative range, reported in the text
+. use "$data/analysis.dta", clear
+
+. keep if special_prov == 0
+(44,597 observations deleted)
+
+. keep if keepA == 1
+(7,174 observations deleted)
+
+. keep if average_rank <= 4
+(153,330 observations deleted)
+
+. 
+. tabstat average_rank, by(level3_name) statistics(N mean min max) format(%9.2f
+> )
+
+Summary for variables: average_rank
+Group variable: level3_name 
+
+     level3_name |         N      Mean       Min       Max
+-----------------+----------------------------------------
+      公共管理类 |   5861.00      2.50      2.50      2.50
+          化学类 |   5272.00      3.30      3.30      3.30
+        历史学类 |   2333.00      3.61      3.61      3.61
+      地理科学类 |   2568.00      3.79      3.79      3.79
+    新闻传播学类 |   5728.00      2.30      2.30      2.30
+      旅游管理类 |   2393.00      4.00      4.00      4.00
+      生物工程类 |   2097.00      3.50      3.50      3.50
+      生物科学类 |   4717.00      4.00      4.00      4.00
+      电子商务类 |   1683.00      2.08      2.08      2.08
+-----------------+----------------------------------------
+           Total |  32652.00      3.14      2.08      4.00
+----------------------------------------------------------
+
+. 
+. gen S_post = average_rank * post
+
+. gen t      = year - 2022
+
+. gen S_trend = average_rank * t
+
+. 
+. reghdfe ratio_num S_post, absorb($FE) vce(robust)
+(dropped 10 singleton observations)
+(MWFE estimator converged in 9 iterations)
+
+HDFE Linear regression                            Number of obs   =     32,621
+Absorbing 3 HDFE groups                           F(   1,  31011) =      41.39
+                                                  Prob > F        =     0.0000
+                                                  R-squared       =     0.8655
+                                                  Adj R-squared   =     0.8586
+                                                  Within R-sq.    =     0.0015
+                                                  Root MSE        =     0.0904
+
+------------------------------------------------------------------------------
+             |               Robust
+   ratio_num | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+      S_post |  -.0132865   .0020652    -6.43   0.000    -.0173343   -.0092386
+       _cons |   .3039286   .0020878   145.58   0.000     .2998365    .3080207
+------------------------------------------------------------------------------
+
+Absorbed degrees of freedom:
+-------------------------------------------------------------------------------
+> --------+
+                                   Absorbed FE | Categories  - Redundant  = Num
+> . Coefs                                                                      
+>         |
+-----------------------------------------------+-------------------------------
+> --------|
+     province_num#category_num#level3_name_num |       345           0         
+> 345                                                                          
+>                                                                              
+>         |
+                province_num#year#category_num |       387          46         
+> 341                                                                          
+>                                                                              
+>         |
+                            hightitle_num#year |       932           9         
+> 923                                                                          
+>        ?                                                                     
+>         |
+-------------------------------------------------------------------------------
+> --------+
+? = number of redundant parameters may be higher
+
+. reghdfe ratio_num S_post S_trend, absorb($FE) vce(robust)
+(dropped 10 singleton observations)
+(MWFE estimator converged in 9 iterations)
+
+HDFE Linear regression                            Number of obs   =     32,621
+Absorbing 3 HDFE groups                           F(   2,  31010) =      20.90
+                                                  Prob > F        =     0.0000
+                                                  R-squared       =     0.8655
+                                                  Adj R-squared   =     0.8586
+                                                  Within R-sq.    =     0.0015
+                                                  Root MSE        =     0.0904
+
+------------------------------------------------------------------------------
+             |               Robust
+   ratio_num | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+      S_post |  -.0152574   .0035138    -4.34   0.000    -.0221447   -.0083702
+     S_trend |   .0004349   .0006237     0.70   0.486    -.0007875    .0016573
+       _cons |   .3075426   .0056043    54.88   0.000     .2965581    .3185272
+------------------------------------------------------------------------------
+
+Absorbed degrees of freedom:
+-------------------------------------------------------------------------------
+> --------+
+                                   Absorbed FE | Categories  - Redundant  = Num
+> . Coefs                                                                      
+>         |
+-----------------------------------------------+-------------------------------
+> --------|
+     province_num#category_num#level3_name_num |       345           0         
+> 345                                                                          
+>                                                                              
+>         |
+                province_num#year#category_num |       387          46         
+> 341                                                                          
+>                                                                              
+>         |
+                            hightitle_num#year |       932           9         
+> 923                                                                          
+>        ?                                                                     
+>         |
+-------------------------------------------------------------------------------
+> --------+
+? = number of redundant parameters may be higher
+
+. 
+. ****************Province-level correlations behind the maps
+. use "$raw/involution_rate.dta", clear
+
+. gen rate = real(substr(involution_rate, 1, length(involution_rate) - 1)) / 10
+> 0
+
+. gen bkrate = real(substr(本科率, 1, length(本科率) - 1)) / 100
+
+. gen exam = real(subinstr(高考人数, "万", "", .))
+
+. keep province rate bkrate exam
+
+. merge 1:1 province using "$raw/density.dta"
+
+    Result                      Number of obs
+    -----------------------------------------
+    Not matched                             0
+    Matched                                31  (_merge==3)
+    -----------------------------------------
+
+. keep if _merge == 3
+(0 observations deleted)
+
+. drop _merge
+
+. 
+. gen shanhe = inlist(province, "山东", "山西", "河南", "河北")
+
+. 
+. corr density rate
+(obs=31)
+
+             |  density     rate
+-------------+------------------
+     density |   1.0000
+        rate |  -0.1762   1.0000
+
+
+. corr density exam
+(obs=31)
+
+             |  density     exam
+-------------+------------------
+     density |   1.0000
+        exam |   0.6621   1.0000
+
+
+. 
+. tabstat density rate, by(shanhe) statistics(N mean sd min max) format(%9.3f)
+
+Summary statistics: N, Mean, SD, Min, Max
+Group variable: shanhe 
+
+  shanhe |   density      rate
+---------+--------------------
+       0 |    27.000    27.000
+         |     3.997     0.241
+         |     2.373     0.098
+         |     0.110     0.080
+         |     9.030     0.460
+---------+--------------------
+       1 |     4.000     4.000
+         |     8.870     0.165
+         |     1.625     0.077
+         |     6.550     0.100
+         |    10.180     0.250
+---------+--------------------
+   Total |    31.000    31.000
+         |     4.626     0.231
+         |     2.811     0.098
+         |     0.110     0.080
+         |    10.180     0.460
+------------------------------
+
+. 
+. export delimited using "$data/prov_density.csv", replace
+file E:/小创code/writing_sample/data/prov_density.csv saved
+
+. 
+. log close
+      name:  <unnamed>
+       log:  E:/小创code/major-choice-replication/output/logs/08_mechanisms.log
+  log type:  text
+ closed on:  10 Sep 2026, 00:15:31
+-------------------------------------------------------------------------------
+
+. 
+end of do-file
+
+. do "$root/code/figures/09_event_study.do"
+
+. clear
+
+. * Globals come from config.do, which run_all.do loads first.
+. * To run this file on its own, run config.do in the same session.
+. 
+. log using "$logs/09_event_study.log", replace text
+(file E:/小创code/major-choice-replication/output/logs/09_event_study.log not
+    found)
+-------------------------------------------------------------------------------
+      name:  <unnamed>
+       log:  E:/小创code/major-choice-replication/output/logs/09_event_study.lo
+> g
+  log type:  text
+ opened on:  10 Sep 2026, 00:15:31
+
+. 
+. ****************Figure 2, baseline sample, 2022 omitted
+. use "$data/analysis.dta", clear
+
+. keep if special_prov == 0
+(44,597 observations deleted)
+
+. keep if keepA == 1
+(7,174 observations deleted)
+
+. 
+. gen DID_1 = treat1 * event_time_1
+
+. gen DID_2 = treat1 * event_time_2
+
+. gen DID_3 = treat1 * event_time_3
+
+. gen DID_4 = treat1 * event_time_4
+
+. gen DID_5 = treat1 * event_time_5
+
+. gen DID_7 = treat1 * event_time_7
+
+. gen DID_8 = treat1 * event_time_8
+
+. gen DID_9 = treat1 * event_time_9
+
+. 
+. *Specification one, treatment indicator as a control
+. reghdfe ratio_num DID_1 DID_2 DID_3 DID_4 DID_5 DID_7 DID_8 DID_9 treat1, abs
+> orb(province_num#year#category_num hightitle_num#year) vce(robust)
+(dropped 1 singleton observations)
+(MWFE estimator converged in 7 iterations)
+
+HDFE Linear regression                            Number of obs   =    185,905
+Absorbing 2 HDFE groups                           F(   9, 184485) =      72.40
+                                                  Prob > F        =     0.0000
+                                                  R-squared       =     0.8368
+                                                  Adj R-squared   =     0.8356
+                                                  Within R-sq.    =     0.0037
+                                                  Root MSE        =     0.0933
+
+------------------------------------------------------------------------------
+             |               Robust
+   ratio_num | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+       DID_1 |    -.00666   .0039169    -1.70   0.089    -.0143371    .0010171
+       DID_2 |  -.0069593   .0035372    -1.97   0.049     -.013892   -.0000265
+       DID_3 |  -.0063733   .0036125    -1.76   0.078    -.0134537    .0007071
+       DID_4 |  -.0035939   .0036817    -0.98   0.329      -.01081    .0036222
+       DID_5 |  -.0027279   .0040093    -0.68   0.496     -.010586    .0051303
+       DID_7 |   .0166517   .0040682     4.09   0.000     .0086782    .0246252
+       DID_8 |   .0279237   .0040022     6.98   0.000     .0200794    .0357679
+       DID_9 |   .0274325   .0041431     6.62   0.000     .0193122    .0355528
+      treat1 |   .0150452    .002822     5.33   0.000     .0095142    .0205763
+       _cons |   .2684602   .0002263  1186.12   0.000     .2680166    .2689038
+------------------------------------------------------------------------------
+
+Absorbed degrees of freedom:
+----------------------------------------------------------------------------+
+                        Absorbed FE | Categories  - Redundant  = Num. Coefs |
+------------------------------------+---------------------------------------|
+     province_num#year#category_num |       388           0         388     |
+                 hightitle_num#year |      1032           9        1023     |
+----------------------------------------------------------------------------+
+
+. test DID_1 DID_2 DID_3 DID_4 DID_5
+
+ ( 1)  DID_1 = 0
+ ( 2)  DID_2 = 0
+ ( 3)  DID_3 = 0
+ ( 4)  DID_4 = 0
+ ( 5)  DID_5 = 0
+
+       F(  5,184485) =    1.13
+            Prob > F =    0.3405
+
+. 
+. tempname p1
+
+. postfile `p1' int yr double b1 double se1 using "$data/es_s1.dta", replace
+
+. post `p1' (2017) (_b[DID_1]) (_se[DID_1])
+
+. post `p1' (2018) (_b[DID_2]) (_se[DID_2])
+
+. post `p1' (2019) (_b[DID_3]) (_se[DID_3])
+
+. post `p1' (2020) (_b[DID_4]) (_se[DID_4])
+
+. post `p1' (2021) (_b[DID_5]) (_se[DID_5])
+
+. post `p1' (2022) (0)         (0)
+
+. post `p1' (2023) (_b[DID_7]) (_se[DID_7])
+
+. post `p1' (2024) (_b[DID_8]) (_se[DID_8])
+
+. post `p1' (2025) (_b[DID_9]) (_se[DID_9])
+
+. postclose `p1'
+
+. 
+. *Specification two, major fixed effects instead
+. reghdfe ratio_num DID_1 DID_2 DID_3 DID_4 DID_5 DID_7 DID_8 DID_9, absorb($FE
+> ) vce(robust)
+(dropped 18 singleton observations)
+(MWFE estimator converged in 8 iterations)
+
+HDFE Linear regression                            Number of obs   =    185,888
+Absorbing 3 HDFE groups                           F(   8, 183166) =      29.39
+                                                  Prob > F        =     0.0000
+                                                  R-squared       =     0.8525
+                                                  Adj R-squared   =     0.8503
+                                                  Within R-sq.    =     0.0014
+                                                  Root MSE        =     0.0890
+
+------------------------------------------------------------------------------
+             |               Robust
+   ratio_num | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+       DID_1 |  -.0059029   .0038446    -1.54   0.125    -.0134383    .0016325
+       DID_2 |  -.0057048   .0034453    -1.66   0.098    -.0124575    .0010479
+       DID_3 |  -.0061723   .0034994    -1.76   0.078    -.0130311    .0006865
+       DID_4 |  -.0033922    .003532    -0.96   0.337    -.0103149    .0035304
+       DID_5 |  -.0030777   .0038342    -0.80   0.422    -.0105926    .0044372
+       DID_7 |   .0172735    .003881     4.45   0.000     .0096668    .0248802
+       DID_8 |   .0284833   .0038354     7.43   0.000     .0209661    .0360006
+       DID_9 |   .0286188   .0039788     7.19   0.000     .0208206    .0364171
+       _cons |    .269501   .0002753   979.02   0.000     .2689614    .2700405
+------------------------------------------------------------------------------
+
+Absorbed degrees of freedom:
+-------------------------------------------------------------------------------
+> --------+
+                                   Absorbed FE | Categories  - Redundant  = Num
+> . Coefs                                                                      
+>         |
+-----------------------------------------------+-------------------------------
+> --------|
+     province_num#category_num#level3_name_num |      1349           0        1
+> 349                                                                          
+>                                                                              
+>         |
+                province_num#year#category_num |       388          46         
+> 342                                                                          
+>                                                                              
+>         |
+                            hightitle_num#year |      1032           9        1
+> 023                                                                          
+>        ?                                                                     
+>         |
+-------------------------------------------------------------------------------
+> --------+
+? = number of redundant parameters may be higher
+
+. test DID_1 DID_2 DID_3 DID_4 DID_5
+
+ ( 1)  DID_1 = 0
+ ( 2)  DID_2 = 0
+ ( 3)  DID_3 = 0
+ ( 4)  DID_4 = 0
+ ( 5)  DID_5 = 0
+
+       F(  5,183166) =    0.86
+            Prob > F =    0.5039
+
+. test DID_4 DID_5
+
+ ( 1)  DID_4 = 0
+ ( 2)  DID_5 = 0
+
+       F(  2,183166) =    0.53
+            Prob > F =    0.5915
+
+. 
+. tempname p2
+
+. postfile `p2' int yr double b2 double se2 using "$data/es_s2.dta", replace
+
+. post `p2' (2017) (_b[DID_1]) (_se[DID_1])
+
+. post `p2' (2018) (_b[DID_2]) (_se[DID_2])
+
+. post `p2' (2019) (_b[DID_3]) (_se[DID_3])
+
+. post `p2' (2020) (_b[DID_4]) (_se[DID_4])
+
+. post `p2' (2021) (_b[DID_5]) (_se[DID_5])
+
+. post `p2' (2022) (0)         (0)
+
+. post `p2' (2023) (_b[DID_7]) (_se[DID_7])
+
+. post `p2' (2024) (_b[DID_8]) (_se[DID_8])
+
+. post `p2' (2025) (_b[DID_9]) (_se[DID_9])
+
+. postclose `p2'
+
+. 
+. use "$data/es_s1.dta", clear
+
+. merge 1:1 yr using "$data/es_s2.dta", nogen
+
+    Result                      Number of obs
+    -----------------------------------------
+    Not matched                             0
+    Matched                                 9  
+    -----------------------------------------
+
+. 
+. gen lo1 = b1 - 1.96*se1
+
+. gen hi1 = b1 + 1.96*se1
+
+. gen lo2 = b2 - 1.96*se2
+
+. gen hi2 = b2 + 1.96*se2
+
+. 
+. *Offset the two series slightly so the markers do not sit on top of each othe
+> r
+. gen yr1 = yr - 0.06
+
+. gen yr2 = yr + 0.06
+
+. 
+. list yr b1 b2
+
+     +--------------------------------+
+     |   yr           b1           b2 |
+     |--------------------------------|
+  1. | 2017   -.00665998   -.00590289 |
+  2. | 2018   -.00695929    -.0057048 |
+  3. | 2019   -.00637332   -.00617229 |
+  4. | 2020   -.00359393   -.00339221 |
+  5. | 2021   -.00272787   -.00307771 |
+     |--------------------------------|
+  6. | 2022            0            0 |
+  7. | 2023     .0166517    .01727352 |
+  8. | 2024    .02792369    .02848332 |
+  9. | 2025    .02743255    .02861884 |
+     +--------------------------------+
+
+. 
+. twoway (rarea lo1 hi1 yr1, color("$BLUE%12") lwidth(none)) ///
+>        (rarea lo2 hi2 yr2, color("$ORANGE%12") lwidth(none)) ///
+>        (connected b1 yr1, lcolor("$BLUE") lwidth(medthick) msymbol(O) msize(m
+> edium) mcolor("$BLUE")) ///
+>        (connected b2 yr2, lcolor("$ORANGE") lwidth(medthick) msymbol(O) msize
+> (medium) mcolor("$ORANGE")), ///
+>         yline(0, lpattern(dot) lcolor(gs6)) ///
+>         xline(2022.5, lpattern(dash) lcolor(gs8)) ///
+>         xlabel(2017(1)2025, labsize(small)) ///
+>         ylabel(, labsize(small) angle(0) grid glcolor(gs14) glwidth(vthin)) /
+> //
+>         ytitle("Change in within-province rank ratio", size(small)) ///
+>         xtitle("") ///
+>         legend(order(3 "Treatment-group control" 4 "Major fixed effects") ///
+>                position(6) rows(1) region(lstyle(none)) size(small)) ///
+>         graphregion(color(white)) plotregion(color(white) margin(medium)) ///
+>         ysize(4) xsize(6.5)
+
+. 
+. graph export "$figs/fig_es_ribbon.pdf", replace
+file E:/小创code/major-choice-replication/output/figures/fig_es_ribbon.pdf
+    saved as PDF format
+
+. graph export "$figs/fig_es_ribbon.png", replace width(2400)
+(file E:/小创code/major-choice-replication/output/figures/fig_es_ribbon.png
+    not found)
+file E:/小创code/major-choice-replication/output/figures/fig_es_ribbon.png
+    saved as PNG format
+
+. 
+. ****************Figure 4, all provinces reinstated
+. use "$data/analysis.dta", clear
+
+. 
+. gen DID_1 = treat1 * event_time_1
+
+. gen DID_2 = treat1 * event_time_2
+
+. gen DID_3 = treat1 * event_time_3
+
+. gen DID_4 = treat1 * event_time_4
+
+. gen DID_5 = treat1 * event_time_5
+
+. gen DID_7 = treat1 * event_time_7
+
+. gen DID_8 = treat1 * event_time_8
+
+. gen DID_9 = treat1 * event_time_9
+
+. 
+. reghdfe ratio_num DID_1 DID_2 DID_3 DID_4 DID_5 DID_7 DID_8 DID_9 treat1, abs
+> orb(province_num#year#category_num hightitle_num#year) vce(robust)
+(dropped 2 singleton observations)
+(MWFE estimator converged in 6 iterations)
+
+HDFE Linear regression                            Number of obs   =    237,670
+Absorbing 2 HDFE groups                           F(   9, 236176) =      76.53
+                                                  Prob > F        =     0.0000
+                                                  R-squared       =     0.8319
+                                                  Adj R-squared   =     0.8309
+                                                  Within R-sq.    =     0.0030
+                                                  Root MSE        =     0.0951
+
+------------------------------------------------------------------------------
+             |               Robust
+   ratio_num | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+       DID_1 |  -.0042211   .0034866    -1.21   0.226    -.0110548    .0026125
+       DID_2 |  -.0024566   .0031312    -0.78   0.433    -.0085938    .0036805
+       DID_3 |  -.0042494   .0032139    -1.32   0.186    -.0105486    .0020498
+       DID_4 |  -.0038322   .0032104    -1.19   0.233    -.0101244      .00246
+       DID_5 |  -.0022034   .0034288    -0.64   0.520    -.0089237     .004517
+       DID_7 |   .0198812   .0035299     5.63   0.000     .0129626    .0267997
+       DID_8 |   .0256213   .0035303     7.26   0.000      .018702    .0325407
+       DID_9 |   .0259765   .0034453     7.54   0.000     .0192237    .0327293
+      treat1 |   .0116676   .0024143     4.83   0.000     .0069356    .0163997
+       _cons |   .2657204   .0002035  1305.75   0.000     .2653216    .2661193
+------------------------------------------------------------------------------
+
+Absorbed degrees of freedom:
+----------------------------------------------------------------------------+
+                        Absorbed FE | Categories  - Redundant  = Num. Coefs |
+------------------------------------+---------------------------------------|
+     province_num#year#category_num |       459           0         459     |
+                 hightitle_num#year |      1035           9        1026     |
+----------------------------------------------------------------------------+
+
+. test DID_1 DID_2 DID_3 DID_4 DID_5
+
+ ( 1)  DID_1 = 0
+ ( 2)  DID_2 = 0
+ ( 3)  DID_3 = 0
+ ( 4)  DID_4 = 0
+ ( 5)  DID_5 = 0
+
+       F(  5,236176) =    0.49
+            Prob > F =    0.7842
+
+. 
+. tempname a1
+
+. postfile `a1' int yr double b1 double se1 using "$data/es_all_s1.dta", replac
+> e
+
+. post `a1' (2017) (_b[DID_1]) (_se[DID_1])
+
+. post `a1' (2018) (_b[DID_2]) (_se[DID_2])
+
+. post `a1' (2019) (_b[DID_3]) (_se[DID_3])
+
+. post `a1' (2020) (_b[DID_4]) (_se[DID_4])
+
+. post `a1' (2021) (_b[DID_5]) (_se[DID_5])
+
+. post `a1' (2022) (0)         (0)
+
+. post `a1' (2023) (_b[DID_7]) (_se[DID_7])
+
+. post `a1' (2024) (_b[DID_8]) (_se[DID_8])
+
+. post `a1' (2025) (_b[DID_9]) (_se[DID_9])
+
+. postclose `a1'
+
+. 
+. reghdfe ratio_num DID_1 DID_2 DID_3 DID_4 DID_5 DID_7 DID_8 DID_9, absorb($FE
+> ) vce(robust)
+(dropped 20 singleton observations)
+(MWFE estimator converged in 8 iterations)
+
+HDFE Linear regression                            Number of obs   =    237,652
+Absorbing 3 HDFE groups                           F(   8, 234454) =      34.41
+                                                  Prob > F        =     0.0000
+                                                  R-squared       =     0.8482
+                                                  Adj R-squared   =     0.8462
+                                                  Within R-sq.    =     0.0012
+                                                  Root MSE        =     0.0907
+
+------------------------------------------------------------------------------
+             |               Robust
+   ratio_num | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+       DID_1 |  -.0065052   .0035054    -1.86   0.063    -.0133757    .0003653
+       DID_2 |  -.0041624   .0031204    -1.33   0.182    -.0102783    .0019536
+       DID_3 |  -.0065039   .0031831    -2.04   0.041    -.0127427   -.0002651
+       DID_4 |  -.0041001   .0030712    -1.34   0.182    -.0101196    .0019193
+       DID_5 |  -.0027878   .0032672    -0.85   0.394    -.0091914    .0036158
+       DID_7 |   .0201094   .0033551     5.99   0.000     .0135335    .0266853
+       DID_8 |   .0254374   .0033562     7.58   0.000     .0188592    .0320155
+       DID_9 |   .0264572   .0032934     8.03   0.000     .0200021    .0329122
+       _cons |      .2666   .0002422  1100.58   0.000     .2661252    .2670748
+------------------------------------------------------------------------------
+
+Absorbed degrees of freedom:
+-------------------------------------------------------------------------------
+> --------+
+                                   Absorbed FE | Categories  - Redundant  = Num
+> . Coefs                                                                      
+>         |
+-----------------------------------------------+-------------------------------
+> --------|
+     province_num#category_num#level3_name_num |      1763           0        1
+> 763                                                                          
+>                                                                              
+>         |
+                province_num#year#category_num |       459          58         
+> 401                                                                          
+>                                                                              
+>         |
+                            hightitle_num#year |      1035           9        1
+> 026                                                                          
+>        ?                                                                     
+>         |
+-------------------------------------------------------------------------------
+> --------+
+? = number of redundant parameters may be higher
+
+. test DID_1 DID_2 DID_3 DID_4 DID_5
+
+ ( 1)  DID_1 = 0
+ ( 2)  DID_2 = 0
+ ( 3)  DID_3 = 0
+ ( 4)  DID_4 = 0
+ ( 5)  DID_5 = 0
+
+       F(  5,234454) =    1.05
+            Prob > F =    0.3842
+
+. 
+. tempname a2
+
+. postfile `a2' int yr double b2 double se2 using "$data/es_all_s2.dta", replac
+> e
+
+. post `a2' (2017) (_b[DID_1]) (_se[DID_1])
+
+. post `a2' (2018) (_b[DID_2]) (_se[DID_2])
+
+. post `a2' (2019) (_b[DID_3]) (_se[DID_3])
+
+. post `a2' (2020) (_b[DID_4]) (_se[DID_4])
+
+. post `a2' (2021) (_b[DID_5]) (_se[DID_5])
+
+. post `a2' (2022) (0)         (0)
+
+. post `a2' (2023) (_b[DID_7]) (_se[DID_7])
+
+. post `a2' (2024) (_b[DID_8]) (_se[DID_8])
+
+. post `a2' (2025) (_b[DID_9]) (_se[DID_9])
+
+. postclose `a2'
+
+. 
+. use "$data/es_all_s1.dta", clear
+
+. merge 1:1 yr using "$data/es_all_s2.dta", nogen
+
+    Result                      Number of obs
+    -----------------------------------------
+    Not matched                             0
+    Matched                                 9  
+    -----------------------------------------
+
+. 
+. gen lo1 = b1 - 1.96*se1
+
+. gen hi1 = b1 + 1.96*se1
+
+. gen lo2 = b2 - 1.96*se2
+
+. gen hi2 = b2 + 1.96*se2
+
+. gen yr1 = yr - 0.06
+
+. gen yr2 = yr + 0.06
+
+. 
+. list yr b1 b2
+
+     +--------------------------------+
+     |   yr           b1           b2 |
+     |--------------------------------|
+  1. | 2017   -.00422112    -.0065052 |
+  2. | 2018   -.00245665   -.00416238 |
+  3. | 2019   -.00424939   -.00650391 |
+  4. | 2020   -.00383218   -.00410012 |
+  5. | 2021   -.00220338   -.00278779 |
+     |--------------------------------|
+  6. | 2022            0            0 |
+  7. | 2023    .01988116    .02010939 |
+  8. | 2024    .02562135    .02543737 |
+  9. | 2025    .02597646    .02645719 |
+     +--------------------------------+
+
+. 
+. twoway (rarea lo1 hi1 yr1, color("$BLUE%12") lwidth(none)) ///
+>        (rarea lo2 hi2 yr2, color("$ORANGE%12") lwidth(none)) ///
+>        (connected b1 yr1, lcolor("$BLUE") lwidth(medthick) msymbol(O) msize(m
+> edium) mcolor("$BLUE")) ///
+>        (connected b2 yr2, lcolor("$ORANGE") lwidth(medthick) msymbol(O) msize
+> (medium) mcolor("$ORANGE")), ///
+>         yline(0, lpattern(dot) lcolor(gs6)) ///
+>         xline(2022.5, lpattern(dash) lcolor(gs8)) ///
+>         xlabel(2017(1)2025, labsize(small)) ///
+>         ylabel(, labsize(small) angle(0) grid glcolor(gs14) glwidth(vthin)) /
+> //
+>         ytitle("Change in within-province rank ratio", size(small)) ///
+>         xtitle("") ///
+>         legend(order(3 "Treatment-group control" 4 "Major fixed effects") ///
+>                position(6) rows(1) region(lstyle(none)) size(small)) ///
+>         graphregion(color(white)) plotregion(color(white) margin(medium)) ///
+>         ysize(4) xsize(6.5)
+
+. 
+. graph export "$figs/fig_es_allprov.pdf", replace
+file E:/小创code/major-choice-replication/output/figures/fig_es_allprov.pdf
+    saved as PDF format
+
+. graph export "$figs/fig_es_allprov.png", replace width(2400)
+(file E:/小创code/major-choice-replication/output/figures/fig_es_allprov.png
+    not found)
+file E:/小创code/major-choice-replication/output/figures/fig_es_allprov.png
+    saved as PNG format
+
+. 
+. log close
+      name:  <unnamed>
+       log:  E:/小创code/major-choice-replication/output/logs/09_event_study.lo
+> g
+  log type:  text
+ closed on:  10 Sep 2026, 00:15:44
+-------------------------------------------------------------------------------
+
+. 
+end of do-file
+
+. do "$root/code/figures/11_dose.do"
+
+. clear
+
+. * Globals come from config.do, which run_all.do loads first.
+. * To run this file on its own, run config.do in the same session.
+. 
+. log using "$logs/11_dose.log", replace text
+(file E:/小创code/major-choice-replication/output/logs/11_dose.log not found)
+-------------------------------------------------------------------------------
+      name:  <unnamed>
+       log:  E:/小创code/major-choice-replication/output/logs/11_dose.log
+  log type:  text
+ opened on:  10 Sep 2026, 00:15:44
+
+. 
+. ****************Figure 9, one coefficient per score bin
+. use "$data/analysis.dta", clear
+
+. keep if special_prov == 0
+(44,597 observations deleted)
+
+. keep if keepA == 1
+(7,174 observations deleted)
+
+. 
+. gen score_bin = ceil(average_rank)
+
+. tab score_bin
+
+  score_bin |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          3 |     13,272        7.14        7.14
+          4 |     19,380       10.42       17.56
+          5 |     33,791       18.17       35.73
+          6 |     51,511       27.70       63.42
+          7 |     18,307        9.84       73.27
+          8 |     44,580       23.97       97.24
+          9 |      5,141        2.76      100.00
+------------+-----------------------------------
+      Total |    185,982      100.00
+
+. 
+. *Major fixed effects would absorb the score variation the figure is meant to 
+> show
+. reghdfe ratio_num ib7.score_bin##i.post, absorb(province_num#year#category_nu
+> m hightitle_num#year) vce(robust)
+(dropped 1 singleton observations)
+(MWFE estimator converged in 7 iterations)
+note: 1bn.post is probably collinear with the fixed effects (all partialled-out
+>  values are close to zero; tol = 1.0e-09)
+
+HDFE Linear regression                            Number of obs   =    185,905
+Absorbing 2 HDFE groups                           F(  12, 184482) =     803.64
+                                                  Prob > F        =     0.0000
+                                                  R-squared       =     0.8446
+                                                  Adj R-squared   =     0.8434
+                                                  Within R-sq.    =     0.0510
+                                                  Root MSE        =     0.0911
+
+------------------------------------------------------------------------------
+             |               Robust
+   ratio_num | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+   score_bin |
+          3  |   .0148237   .0012752    11.62   0.000     .0123243    .0173232
+          4  |   .0191135   .0011771    16.24   0.000     .0168064    .0214206
+          5  |   .0139158   .0010239    13.59   0.000      .011909    .0159226
+          6  |   .0045919   .0009562     4.80   0.000     .0027178    .0064661
+          8  |  -.0169175   .0009534   -17.74   0.000    -.0187862   -.0150488
+          9  |   .0094726   .0018756     5.05   0.000     .0057965    .0131486
+             |
+      1.post |          0  (omitted)
+             |
+   score_bin#|
+        post |
+        3 1  |   .0639644   .0023602    27.10   0.000     .0593384    .0685904
+        4 1  |   .0384775   .0021086    18.25   0.000     .0343446    .0426104
+        5 1  |   .0642993    .001885    34.11   0.000     .0606048    .0679939
+        6 1  |   .0401468   .0017063    23.53   0.000     .0368026    .0434911
+        8 1  |   .0032732   .0017238     1.90   0.058    -.0001055    .0066518
+        9 1  |   .0027861   .0031972     0.87   0.384    -.0034804    .0090526
+             |
+       _cons |   .2566659   .0006686   383.91   0.000     .2553555    .2579762
+------------------------------------------------------------------------------
+
+Absorbed degrees of freedom:
+----------------------------------------------------------------------------+
+                        Absorbed FE | Categories  - Redundant  = Num. Coefs |
+------------------------------------+---------------------------------------|
+     province_num#year#category_num |       388           0         388     |
+                 hightitle_num#year |      1032           9        1023     |
+----------------------------------------------------------------------------+
+
+. 
+. tempname pf
+
+. postfile `pf' int bin double b double se using "$data/dose.dta", replace
+
+. post `pf' (3) (_b[3.score_bin#1.post]) (_se[3.score_bin#1.post])
+
+. post `pf' (4) (_b[4.score_bin#1.post]) (_se[4.score_bin#1.post])
+
+. post `pf' (5) (_b[5.score_bin#1.post]) (_se[5.score_bin#1.post])
+
+. post `pf' (6) (_b[6.score_bin#1.post]) (_se[6.score_bin#1.post])
+
+. post `pf' (7) (0)                      (0)
+
+. post `pf' (8) (_b[8.score_bin#1.post]) (_se[8.score_bin#1.post])
+
+. post `pf' (9) (_b[9.score_bin#1.post]) (_se[9.score_bin#1.post])
+
+. postclose `pf'
+
+. 
+. use "$data/dose.dta", clear
+
+. gen lo = b - 1.96*se
+
+. gen hi = b + 1.96*se
+
+. list
+
+     +----------------------------------------------------+
+     | bin           b          se          lo         hi |
+     |----------------------------------------------------|
+  1. |   3   .06396441   .00236023    .0593384   .0685905 |
+  2. |   4   .03847749   .00210864    .0343446   .0426104 |
+  3. |   5   .06429933   .00188499    .0606047   .0679939 |
+  4. |   6   .04014685   .00170628    .0368025   .0434912 |
+  5. |   7           0           0           0          0 |
+     |----------------------------------------------------|
+  6. |   8   .00327315   .00172383   -.0001056   .0066519 |
+  7. |   9   .00278606   .00319723   -.0034805   .0090526 |
+     +----------------------------------------------------+
+
+. 
+. twoway (rbar lo hi bin, barwidth(0.06) color("$ORANGE%30")) ///
+>        (scatter b bin, msymbol(O) msize(medlarge) mcolor("$ORANGE")), ///
+>         yline(0, lpattern(dot) lcolor(gs6)) ///
+>         xlabel(3 "2-3" 4 "3-4" 5 "4-5" 6 "5-6" 7 "6-7" 8 "7-8" 9 "8-9", labsi
+> ze(small) noticks) ///
+>         xscale(range(2.6 9.4)) ///
+>         ylabel(, labsize(small) angle(0) grid glcolor(gs14) glwidth(vthin)) /
+> //
+>         ytitle("Post-2023 change in rank ratio", size(small)) ///
+>         xtitle("Language model score of major", size(small)) ///
+>         legend(off) ///
+>         graphregion(color(white)) plotregion(color(white) margin(medium)) ///
+>         ysize(4) xsize(6.5)
+
+. 
+. graph export "$figs/fig_dose_fine.pdf", replace
+file E:/小创code/major-choice-replication/output/figures/fig_dose_fine.pdf
+    saved as PDF format
+
+. graph export "$figs/fig_dose_fine.png", replace width(2400)
+(file E:/小创code/major-choice-replication/output/figures/fig_dose_fine.png
+    not found)
+file E:/小创code/major-choice-replication/output/figures/fig_dose_fine.png
+    saved as PNG format
+
+. 
+. ****************Figure 8, the score gradient within the negative range
+. use "$data/analysis.dta", clear
+
+. keep if special_prov == 0
+(44,597 observations deleted)
+
+. keep if keepA == 1
+(7,174 observations deleted)
+
+. keep if average_rank <= 4
+(153,330 observations deleted)
+
+. 
+. sum average_rank, detail
+
+                        average_rank
+-------------------------------------------------------------
+      Percentiles      Smallest
+ 1%     2.083333       2.083333
+ 5%     2.083333       2.083333
+10%          2.3       2.083333       Obs              32,652
+25%          2.5       2.083333       Sum of wgt.      32,652
+
+50%          3.3                      Mean           3.144148
+                        Largest       Std. dev.      .6909036
+75%     3.791667              4
+90%            4              4       Variance       .4773477
+95%            4              4       Skewness       -.141223
+99%            4              4       Kurtosis       1.405847
+
+. 
+. gen S_1 = average_rank * event_time_1
+
+. gen S_2 = average_rank * event_time_2
+
+. gen S_3 = average_rank * event_time_3
+
+. gen S_4 = average_rank * event_time_4
+
+. gen S_5 = average_rank * event_time_5
+
+. gen S_7 = average_rank * event_time_7
+
+. gen S_8 = average_rank * event_time_8
+
+. gen S_9 = average_rank * event_time_9
+
+. 
+. reghdfe ratio_num S_1 S_2 S_3 S_4 S_5 S_7 S_8 S_9, absorb($FE) vce(robust)
+(dropped 10 singleton observations)
+(MWFE estimator converged in 9 iterations)
+
+HDFE Linear regression                            Number of obs   =     32,621
+Absorbing 3 HDFE groups                           F(   8,  31004) =       7.35
+                                                  Prob > F        =     0.0000
+                                                  R-squared       =     0.8656
+                                                  Adj R-squared   =     0.8586
+                                                  Within R-sq.    =     0.0020
+                                                  Root MSE        =     0.0904
+
+------------------------------------------------------------------------------
+             |               Robust
+   ratio_num | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+         S_1 |  -.0067101   .0038331    -1.75   0.080    -.0142231     .000803
+         S_2 |  -.0054794   .0034909    -1.57   0.117    -.0123217    .0013629
+         S_3 |  -.0018913   .0036962    -0.51   0.609     -.009136    .0053534
+         S_4 |  -.0063583   .0037524    -1.69   0.090    -.0137133    .0009966
+         S_5 |  -.0041553   .0040954    -1.01   0.310    -.0121825    .0038719
+         S_7 |   -.010879   .0040317    -2.70   0.007    -.0187813   -.0029768
+         S_8 |  -.0211661   .0039719    -5.33   0.000    -.0289512    -.013381
+         S_9 |  -.0218354   .0041572    -5.25   0.000    -.0299836   -.0136871
+       _cons |   .3174443   .0082545    38.46   0.000     .3012651    .3336235
+------------------------------------------------------------------------------
+
+Absorbed degrees of freedom:
+-------------------------------------------------------------------------------
+> --------+
+                                   Absorbed FE | Categories  - Redundant  = Num
+> . Coefs                                                                      
+>         |
+-----------------------------------------------+-------------------------------
+> --------|
+     province_num#category_num#level3_name_num |       345           0         
+> 345                                                                          
+>                                                                              
+>         |
+                province_num#year#category_num |       387          46         
+> 341                                                                          
+>                                                                              
+>         |
+                            hightitle_num#year |       932           9         
+> 923                                                                          
+>        ?                                                                     
+>         |
+-------------------------------------------------------------------------------
+> --------+
+? = number of redundant parameters may be higher
+
+. 
+. test S_1 S_2 S_3 S_4 S_5
+
+ ( 1)  S_1 = 0
+ ( 2)  S_2 = 0
+ ( 3)  S_3 = 0
+ ( 4)  S_4 = 0
+ ( 5)  S_5 = 0
+
+       F(  5, 31004) =    1.04
+            Prob > F =    0.3942
+
+. test S_4 S_5
+
+ ( 1)  S_4 = 0
+ ( 2)  S_5 = 0
+
+       F(  2, 31004) =    1.46
+            Prob > F =    0.2327
+
+. 
+. tempname pd
+
+. postfile `pd' int yr double b double se using "$data/es_dose4.dta", replace
+
+. post `pd' (2017) (_b[S_1]) (_se[S_1])
+
+. post `pd' (2018) (_b[S_2]) (_se[S_2])
+
+. post `pd' (2019) (_b[S_3]) (_se[S_3])
+
+. post `pd' (2020) (_b[S_4]) (_se[S_4])
+
+. post `pd' (2021) (_b[S_5]) (_se[S_5])
+
+. post `pd' (2022) (0)       (0)
+
+. post `pd' (2023) (_b[S_7]) (_se[S_7])
+
+. post `pd' (2024) (_b[S_8]) (_se[S_8])
+
+. post `pd' (2025) (_b[S_9]) (_se[S_9])
+
+. postclose `pd'
+
+. 
+. use "$data/es_dose4.dta", clear
+
+. gen lo = b - 1.96*se
+
+. gen hi = b + 1.96*se
+
+. list
+
+     +-------------------------------------------------------+
+     |   yr            b          se          lo          hi |
+     |-------------------------------------------------------|
+  1. | 2017   -.00671007   .00383312    -.014223    .0008029 |
+  2. | 2018    -.0054794    .0034909   -.0123216    .0013628 |
+  3. | 2019   -.00189132    .0036962   -.0091359    .0053532 |
+  4. | 2020   -.00635833   .00375245   -.0137131    .0009965 |
+  5. | 2021   -.00415527   .00409542   -.0121823    .0038717 |
+     |-------------------------------------------------------|
+  6. | 2022            0           0           0           0 |
+  7. | 2023   -.01087903   .00403166   -.0187811    -.002977 |
+  8. | 2024   -.02116611    .0039719    -.028951   -.0133812 |
+  9. | 2025   -.02183538   .00415718   -.0299835   -.0136873 |
+     +-------------------------------------------------------+
+
+. 
+. twoway (rarea lo hi yr, color("$ORANGE%15") lwidth(none)) ///
+>        (connected b yr, lcolor("$ORANGE") lwidth(medthick) ///
+>                         msymbol(O) msize(medium) mcolor("$ORANGE")), ///
+>         yline(0, lpattern(dot) lcolor(gs6)) ///
+>         xline(2022.5, lpattern(dash) lcolor(gs8)) ///
+>         xlabel(2017(1)2025, labsize(small)) ///
+>         ylabel(, labsize(small) angle(0) grid glcolor(gs14) glwidth(vthin)) /
+> //
+>         ytitle("Change in rank ratio per point of score", size(small)) ///
+>         xtitle("") ///
+>         legend(off) ///
+>         graphregion(color(white)) plotregion(color(white) margin(medium)) ///
+>         ysize(4) xsize(6.5)
+
+. 
+. graph export "$figs/fig_es_dose4.pdf", replace
+file E:/小创code/major-choice-replication/output/figures/fig_es_dose4.pdf
+    saved as PDF format
+
+. graph export "$figs/fig_es_dose4.png", replace width(2400)
+(file E:/小创code/major-choice-replication/output/figures/fig_es_dose4.png
+    not found)
+file E:/小创code/major-choice-replication/output/figures/fig_es_dose4.png
+    saved as PNG format
+
+. 
+. log close
+      name:  <unnamed>
+       log:  E:/小创code/major-choice-replication/output/logs/11_dose.log
+  log type:  text
+ closed on:  10 Sep 2026, 00:15:48
+-------------------------------------------------------------------------------
+
+. 
+end of do-file
+
+. 
+end of do-file
