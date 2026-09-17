@@ -1,1 +1,1 @@
-# Stata-Code-Sample
+# Code-Sample
